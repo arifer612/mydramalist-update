@@ -75,7 +75,7 @@ def ep_list(title): # Generates a list with the episode numbers and its air date
     soup = bs4.BeautifulSoup(page_src.text, 'lxml')
     episode = dict()
     start_info = soup.find('th', text='放送期間').next_sibling.text.replace('\n','').split(' - ')[0]
-    end_info = soup.find('th', text='放送期間').next_sibling.text.replace('\n','').split(' - ')[1]
+    end_info = soup.find('th', text='放送期間').next_sibling.text.replace('\n','').split(' - ')[-1] # Force airing shows to return single = False
     start_year = start_info.split('年')[0]
     if '年' not in end_info: # Checks if series ends on the same year
         single = True
@@ -93,7 +93,7 @@ def ep_list(title): # Generates a list with the episode numbers and its air date
         if single:
             year = start_year
         else:
-            year = entry.contents[1].text[:4]  # Extracts the year
+            year = entry.div.text[:4]  # Extracts the year
         return year
 
     def extract_eps(entry):
