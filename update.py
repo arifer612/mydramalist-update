@@ -161,16 +161,3 @@ def updated_list(log):
     logstr = [str(ep_num)+'\n' for ep_num in log]
     with open('logs.txt','w') as logfile:
         logfile.writelines(logstr)
-
-
-## Begin script
-usr, pw = user_info()
-print('What show do you wish to update?')
-title = input('>>>')
-root = search_for_title(title)
-wiki_link = wiki(title)
-episodes = ep_list(title)
-updatebot = webdriver.Chrome()
-login(updatebot,usr,pw)
-log = update(updatebot,root,episodes,wiki_link)
-updated_list(log)
