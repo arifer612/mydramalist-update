@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="mdl-update",
-    version="0.1.6",
+    version="0.1.8",
     author="arifer",
     author_email="arifer1995@gmail.com",
     description="A python package to update MyDramaList using information from Wikipedia",

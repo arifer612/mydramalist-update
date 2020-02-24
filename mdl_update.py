@@ -15,7 +15,7 @@ def user_info():
 
 
 def login(driver, username='', password=''): # Logs into MDL
-    if driver and username and password:  # Check if non-empty
+    if username and password:  # Check if non-empty
         def login_page(driver, username, password):
             driver.get('https://mydramalist.com/signin')
             driver.find_element_by_xpath(
@@ -126,7 +126,7 @@ def episodes(title): # Generates a list with the episode numbers and its air dat
     ep_list = []
     for i in range(1, len(episode)):
         ep_list.append([i, entry(i)])
-    return ep_list
+    return ep_list, root, wiki_link
 
 
 def seriesupdate(driver, root, update_list, wiki_link=''):
@@ -183,13 +183,13 @@ def seriesupdate(driver, root, update_list, wiki_link=''):
 
 def save_log(log,title,dir=''):
     logstr = [str(ep_num)+'\n' for ep_num in log]
-    with open('{}\{}_logs.txt'.format(dir,title.replace(' ','_')),'w') as logfile:
+    with open('{}\logs\{}_logs.txt'.format(dir,title.replace(' ','_')),'w') as logfile:
         logfile.writelines(logstr)
 
 
 def open_log(title,dir=''):
     try:
-        with open('{}\{}_logs.txt'.format(dir,title.replace(' ','_')),'r') as logfile:
+        with open('{}\logs\{}_logs.txt'.format(dir,title.replace(' ','_')),'r') as logfile:
             updated = [ep.replace('\n', '') for ep in logfile.readlines()]
     except Exception:
         updated = []
