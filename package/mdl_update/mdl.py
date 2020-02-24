@@ -2,8 +2,7 @@
 # The end-user will (ideally) only be using the function login() and seriesupdate()
 # login() logs the user into MDL, returns nothing
 # seriesupdate() edits the MDL series entry with the episodes' air-date and returns a list of successful edits
-
-from .Lib import library
+import library
 
 
 def login(driver, username='', password=''): # Logs into MDL

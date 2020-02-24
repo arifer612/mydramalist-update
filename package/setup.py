@@ -1,15 +1,15 @@
 import setuptools
 
 with open("README.md", "r") as fh:
-    long_description = fh.read()
+    readme_file = fh.read()
 
 setuptools.setup(
     name="mdl-update",
-    version="0.1.8",
+    version="0.1.10",
     author="arifer",
     author_email="arifer1995@gmail.com",
-    description="A python package to update MyDramaList using information from Wikipedia",
-    long_description=long_description,
+    description="A python package to update MyDramaList using information from ja.wikipedia.org",
+    long_description=readme_file,
     long_description_content_type="text/markdown",
     url="https://github.com/arifer612/mydramalist-update",
     packages=setuptools.find_packages(),

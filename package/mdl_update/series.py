@@ -1,13 +1,11 @@
 # episodes() retrieves information of the series from ja.wikipedia.org and parses the necessary information into a
 # list form to be updated on MDL
-
-from . import Lib
-from googlesearch import search
-import requests, bs4
-
+import requests
+import bs4
+from .library import links
 
 def episodes(title):  # Generates a list with the episode numbers and its air dates
-    root, wiki_link = Lib.links(title)
+    root, wiki_link = links(title)
     page_src = requests.get(wiki_link)
     soup = bs4.BeautifulSoup(page_src.text, 'lxml')
     episode = dict()
@@ -57,8 +55,8 @@ def episodes(title):  # Generates a list with the episode numbers and its air da
         year = extract_year(year_entry)
         for ep in extract_eps(year_entry):
             ep_num, date, month = extract_ep_and_date(ep)
-            info = '{},{},{}'.format(month, date, year)
-            episode[ep_num] = info
+            airdate = '{}-{}-{}'.format(year, month, date)
+            episode[ep_num] = airdate
 
     # Converts dictionary information into a list
     ep_list = []

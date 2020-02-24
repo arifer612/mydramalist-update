@@ -1,6 +1,7 @@
 from getpass import getpass as g
 from time import sleep
 from selenium.webdriver.common.keys import Keys
+from googlesearch import search
 import os
 import requests
 import bs4
@@ -49,7 +50,7 @@ def directory(py_dir=os.getcwd()):
 
 def links(title):  # Searches for MDL link. Search term has to be accurate
     # Gets MDL link
-    link_res = requests.get('https://mydramalist.com/search?q={}'.format(title))
+    link_res = requests.get('https://mydramalist.com/search',params={'q':title})
     link_soup = bs4.BeautifulSoup(link_res.text, 'lxml')
     link = 'https://mydramalist.com{}'.format(link_soup.find('h6').contents[0]['href'])
     root = '{}/episode/'.format(link)
