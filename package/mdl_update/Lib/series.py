@@ -5,8 +5,8 @@ import bs4
 import library
 
 
-def episodes(title):  # Generates a list with the episode numbers and its air dates
-    root, wiki_link = library.links(title)
+def episodes(title,season='all'):  # Generates a list with the episode numbers and its air dates
+    native_title, root, wiki_link = library.links(title)
     page_src = requests.get(wiki_link)
     soup = bs4.BeautifulSoup(page_src.text, 'lxml')
     episode = dict()
@@ -18,19 +18,16 @@ def episodes(title):  # Generates a list with the episode numbers and its air da
     start_year = start_info.split('年')[0]
     end_year   = end_info.split('年')[0]
     if '年' not in end_info or end_year == start_year :  # Checks if series ends on the same year
-        single = True
+        single = True # Will also trigger for multi-season shows. Declare season number as argument
         year_list = [table for table in soup.find_all(attrs={'class': 'wikitable'}) for entry in table.tbody.tr.contents
                      if '放送日' and '放送内容' in entry]
+        if season != 'all':
+            year_list = [year_list[int(season)-1]] # Selects the specific season (table number)
+        else:
+            pass
     else:
         single = False
         year_list = [table for table in soup.find_all(attrs={'class': 'NavFrame'}) if '年' in table.div.text]
-
-    try:
-        seasons = [season.text for season in
-                   soup.find_all(attrs={'style': 'text-align:center;background-color: #FDEBD0;'}) if '年' not in
-                   season.text]
-    except Exception:
-        pass
 
     def extract_date_month(entry):
         entry = entry.split('年')[-1]
@@ -67,10 +64,43 @@ def episodes(title):  # Generates a list with the episode numbers and its air da
             ep_num, date, month = extract_ep_and_date(ep)
             airdate = '{}-{}-{}'.format(year, month, date)
             episode[ep_num] = airdate
+    else:
+        pass
 
     # Converts dictionary information into a list
     ep_list = []
     ep_max = max(int(key) for key, value in episode.items() if key.isdigit()) + 1
     for i in range(1,ep_max):
-        ep_list.append([i, entry(i)])
-    return ep_list, root, wiki_link, episode
+        ep_list.append([str(i), entry(i)])
+    return ep_list, root, wiki_link
+
+
+def update(username, password, update_list, root, wiki_link):
+    finished_list = []
+    attempt = 0
+    logged_in = False
+
+    with requests.Session() as s:
+        res = library.login(s, username, password)  # Logs in with payload as information
+        while not logged_in and attempt < 4:
+            username, password, logged_in, token = library.login_fail(res)
+            attempt += 1
+            res = library.login(s, username, password)
+
+        if not logged_in and attempt == 3:
+            print('Please try again later')
+            exit()
+        else:
+            print('Successfully logged in')
+
+        for ep, date in update_list:
+            ep_page = s.get(root + ep)
+            soup = bs4.BeautifulSoup(ep_page.text, 'lxml')
+            ep_id = soup.find(attrs={'property': 'mdl:rid'})['content']
+            try:
+                update_res = s.post(library.update_link(ep_id, token), data=library.update_payload(wiki_link, date))
+                if update_res.status_code == 200:  # For successful updates
+                    finished_list.append(ep)
+            except Exception:
+                pass
+    return finished_list

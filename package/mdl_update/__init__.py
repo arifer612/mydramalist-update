@@ -1,3 +1,2 @@
-from . import mdl
-from . import log
-from . import series
+from .Lib import log as log
+from .Lib import series as series

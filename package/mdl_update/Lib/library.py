@@ -15,30 +15,23 @@ def user_info(): # Retrieves username and password
     return usr, pw
 
 
-def login_page(driver, username, password):
-    driver.get('https://mydramalist.com/signin')
-    driver.find_element_by_xpath(
-        '//*[@id="content"]/div/div[2]/div/div/div/div[1]/div/div/form/div[2]/input').send_keys(username)
-    driver.find_element_by_xpath(
-        '//*[@id="content"]/div/div[2]/div/div/div/div[1]/div/div/form/div[3]/input').send_keys(password)
-    sleep(0.5)
-    driver.find_element_by_xpath(
-        '//*[@id="content"]/div/div[2]/div/div/div/div[1]/div/div/form/div[5]/div/div[1]/button').click()
-    sleep(0.5)
+def login(session, username, password):
+    return session.post('https://mydramalist.com/signin', data=login_payload(username,password))
 
 
-def login_fail(driver):
-    if driver.current_url == 'https://mydramalist.com/signin':
+def login_fail(response):
+    try:
+        token = response.request.headers['Cookie'].split(';')[1].split('=')[1]
+        logged_in = True
+        username = False
+        password = False
+    except Exception:
+        token = ''
         logged_in = False
         print('!!Incorrect email or password!!')
         username, password = user_info()
         print("Attempting to login again")
-    else:
-        logged_in = True
-        username = False
-        password = False
-        print("Successfully logged in")
-    return username, password, logged_in
+    return username, password, logged_in, token
 
 
 def directory(py_dir=os.getcwd()):
@@ -61,8 +54,27 @@ def links(title):  # Searches for MDL link. Search term has to be accurate
     try:
         native_title = wiki_soup.find('b', text='Native Title:').next_sibling.next_sibling.text
     except AttributeError:
-        native_title = title
+        native_title = wiki_soup.find(attrs={'itemprop':'name'}).text
     query = native_title + ' site:ja.wikipedia.org'
     wiki_link = [link for link in search(query, lang='jp', start=0, stop=1, pause=0.1)][0]
 
-    return root, wiki_link
+    return native_title, root, wiki_link
+
+
+def login_payload(username,password):
+    return {
+    'username': username,
+    'password': password
+}
+
+
+def update_payload(wiki_link,date):
+    return {
+    'category':'details',
+    'notes':'Information from {}'.format(wiki_link),
+    'release_date':date
+}
+
+
+def update_link(id,token):
+    return 'https://mydramalist.com/v1/edit/episodes/{}/details?lang=undefined&token={}'.format(id,token)
