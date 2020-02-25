@@ -58,8 +58,11 @@ def links(title):  # Searches for MDL link. Search term has to be accurate
     # Gets Wikipedia link
     wiki_res = requests.get(link)
     wiki_soup = bs4.BeautifulSoup(wiki_res.text, 'lxml')
-    native_title = wiki_soup.find('b', text='Native Title:').next_sibling.next_sibling.text
-    query = native_title + 'site:ja.wikipedia.org'
+    try:
+        native_title = wiki_soup.find('b', text='Native Title:').next_sibling.next_sibling.text
+    except AttributeError:
+        native_title = title
+    query = native_title + ' site:ja.wikipedia.org'
     wiki_link = [link for link in search(query, lang='jp', start=0, stop=1, pause=0.1)][0]
 
     return root, wiki_link
