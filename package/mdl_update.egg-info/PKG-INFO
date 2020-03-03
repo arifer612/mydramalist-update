@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: mdl-update
+Version: 0.3.4
+Summary: A python package to update MyDramaList using information from ja.wikipedia.org
+Home-page: https://github.com/arifer612/mydramalist-update
+Author: arifer
+Author-email: arifer1995@gmail.com
+License: UNKNOWN
+Description: # mydramalist-update
+        Updates information of a series on MyDramaList using information from Wiki JP
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown

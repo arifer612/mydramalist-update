@@ -1,6 +1,5 @@
 from getpass import getpass as g
 from time import sleep
-from selenium.webdriver.common.keys import Keys
 from googlesearch import search
 import os
 import requests

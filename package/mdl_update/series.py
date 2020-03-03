@@ -2,7 +2,7 @@
 # list form to be updated on MDL
 import requests
 import bs4
-import library
+from . import library
 
 
 def episodes(title,season='all'):  # Generates a list with the episode numbers and its air dates
