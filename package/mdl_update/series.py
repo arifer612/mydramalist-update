@@ -96,8 +96,8 @@ def update(username, password, update_list, root, wiki_link):
         for ep, date in update_list:
             ep_page = s.get(root + ep)
             soup = bs4.BeautifulSoup(ep_page.text, 'lxml')
-            ep_id = soup.find(attrs={'property': 'mdl:rid'})['content']
             try:
+                ep_id = soup.find(attrs={'property': 'mdl:rid'})['content']
                 update_res = s.post(library.update_link(ep_id, token), data=library.update_payload(wiki_link, date))
                 if update_res.status_code == 200:  # For successful updates
                     finished_list.append(ep)

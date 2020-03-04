@@ -1,5 +1,4 @@
 from getpass import getpass as g
-from time import sleep
 from googlesearch import search
 import os
 import requests
