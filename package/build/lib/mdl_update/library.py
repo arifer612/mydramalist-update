@@ -1,5 +1,4 @@
 from getpass import getpass as g
-from time import sleep
 from googlesearch import search
 import os
 import requests
@@ -67,10 +66,10 @@ def login_payload(username,password):
 }
 
 
-def update_payload(wiki_link,date):
+def update_payload(wiki_link,date,additional_info=None):
     return {
     'category':'details',
-    'notes':'Information from {}'.format(wiki_link),
+    'notes':'Information from {}{}'.format(wiki_link,' '+additional_info if additional_info else ''),
     'release_date':date
 }
 

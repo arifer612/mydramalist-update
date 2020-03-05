@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="mdl-update",
-    version="0.3.5",
+    version="0.4.1",
     author="arifer",
     author_email="arifer1995@gmail.com",
-    description="A python package to update MyDramaList using information from ja.wikipedia.org",
+    description="Python package to update Japanese shows on MDL by scraping information from ja.wikipedia.org",
     long_description=readme_file,
     long_description_content_type="text/markdown",
     url="https://github.com/arifer612/mydramalist-update",

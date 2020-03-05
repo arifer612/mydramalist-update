@@ -1,5 +1,6 @@
 # log.py retrieves and saves the log file. The default directory to create/save the log file would be in the
 from . import library
+import os
 
 
 def retrieve(title,dir='.',tail=None,py_dir=os.getcwd()):
