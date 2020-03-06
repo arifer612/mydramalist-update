@@ -13,6 +13,42 @@ def user_info(): # Retrieves username and password
     return usr, pw
 
 
+def get_season(ask_season): # Retrieves season number
+    if ask_season:
+        while ask_season:
+            season = input('Season number: >>>')
+            if season == 'Forced':
+                ask_season = input('Force a single season? (y/n) >>>') != 'y'
+            else:
+                ask_season = input('Update season {}? (y/n) >>>'.format(season)) != 'y'
+    else:
+        season = None
+        print('None')
+    return season
+
+
+def get_info(ask_info): # Retrieves additional information (if needed) to parse into information box
+    if ask_info:
+        while ask_info:
+            print('Additional information:')
+            additional_info = input('>>>')
+            if additional_info == 'lang':
+                print('Available language: jp/ko')
+                additional_info = input('>>>')
+            ask_info = input('Confirm? (y/n) >>>') != 'y'
+        if additional_info:
+            if additional_info == 'jp' or 'ko':
+                pass
+            else:
+                additional_info = '      ' + additional_info
+        else:
+            print('None')
+    else:
+        additional_info = None
+        print('None')
+    return additional_info
+
+
 def login(session, username, password):
     return session.post('https://mydramalist.com/signin', data=login_payload(username,password))
 
@@ -39,7 +75,7 @@ def directory(py_dir=os.getcwd()):
         pass
 
 
-def links(title):  # Searches for MDL link. Search term has to be accurate
+def links(title, lang='jp'):  # Searches for MDL link. Search term has to be accurate
     # Gets MDL link
     link_res = requests.get('https://mydramalist.com/search',params={'q':title})
     link_soup = bs4.BeautifulSoup(link_res.text, 'lxml')
@@ -53,8 +89,8 @@ def links(title):  # Searches for MDL link. Search term has to be accurate
         native_title = wiki_soup.find('b', text='Native Title:').next_sibling.next_sibling.text
     except AttributeError:
         native_title = wiki_soup.find(attrs={'itemprop':'name'}).text
-    query = native_title + ' site:ja.wikipedia.org'
-    wiki_link = [link for link in search(query, lang='jp', start=0, stop=1, pause=0.1)][0]
+    query = native_title + ' site:wikipedia.org'
+    wiki_link = [link for link in search(query, lang=lang, start=0, stop=1, pause=0.1)][0]
 
     return native_title, root, wiki_link
 
