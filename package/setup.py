@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="mdl-update",
-    version="0.4.1",
+    version="0.5.1",
     author="arifer",
     author_email="arifer1995@gmail.com",
     description="Python package to update Japanese shows on MDL by scraping information from ja.wikipedia.org",

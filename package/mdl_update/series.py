@@ -7,14 +7,17 @@ import datetime
 import re
 
 
-def wiki(title, season=None, lang='jp'):  # Generates a list with the episode numbers and its air dates
+def wiki(title, season=None, lang='jp', column_param=None):  # Generates a list with the episode numbers and its air dates
     # 'Forced' forces us to consider it as a single season entry. Works for single season shows that end in the next
     # year.
     if season == 'Forced':
-        forced = True
+        forced = 1
+        season = None
+    elif season == 'Unforced':
+        forced = -1
         season = None
     else:
-        forced = False
+        forced = 0
 
     if lang == 'jp':
         terms = ['放送期間','年','月','日']
@@ -45,7 +48,7 @@ def wiki(title, season=None, lang='jp'):  # Generates a list with the episode nu
     start_year = start_info.split(terms[1])[0]
     end_year = end_info.split(terms[1])[0] if end_info != ' - ' else None
 
-    if not forced:
+    if forced == 0:
         if end_year:  # Completed
             if terms[1] not in end_info or start_year == end_year:  # Check if series started airing this year
                 single = True  # Will also trigger for multi-season shows. Declare season number as argument
@@ -55,11 +58,14 @@ def wiki(title, season=None, lang='jp'):  # Generates a list with the episode nu
             single = True
         else:
             single = False
-    else:
+    elif forced == 1:
         single = True
+    else:
+        single = False
 
     def table_list(single):
-        add_column = ['放送内容', '配信日', '各話', '企画内容', '授業内容']
+        add_column = ['放送内容', '配信日', '各話', '企画内容', '授業内容', '企画']
+        add_column = add_column + [column_param] if column_param else add_column
         if single:
             for column_entry in add_column:
                 year_list = [table for table in soup.find_all(attrs={'class': 'wikitable'}) for entry in
@@ -91,9 +97,9 @@ def wiki(title, season=None, lang='jp'):  # Generates a list with the episode nu
             year = start_year
         else:
             if lang == 'jp':
-                year = entry.div.text[:4]  # Extracts the year
+                year = entry.div.text.replace(' ','')[:4]  # Extracts the year
             elif lang == 'ko':
-                year = entry.find(class_ = 'mw-headline')['id'][:4]
+                year = entry.find(class_ = 'mw-headline')['id'].replace(' ','')[:4]
         return year
 
     def extract_eps(entry):
@@ -116,14 +122,17 @@ def wiki(title, season=None, lang='jp'):  # Generates a list with the episode nu
         return ep_num, date, month
 
     for year_entry in table_list(single):
-        year = extract_year(year_entry)
-        for ep in extract_eps(year_entry):
-            try:
-                ep_num, date, month = extract_ep_and_date(ep)
-                airdate = '{}-{}-{}'.format(year, month, date)
-                episode[ep_num] = airdate
-            except Exception:
-                pass  # Ignore episodes that fail to be found
+        try:
+            year = extract_year(year_entry)
+            for ep in extract_eps(year_entry):
+                try:
+                    ep_num, date, month = extract_ep_and_date(ep)
+                    airdate = '{}-{}-{}'.format(year, month, date)
+                    episode[ep_num] = airdate
+                except Exception:
+                    pass  # Ignore episodes that fail to be found
+        except Exception:
+            pass
 
     wiki_dict = {re.sub('\D', '', ep): episode[ep] for ep in episode.keys() if
                  re.sub('\D', '', ep)}  # Only show numbered episodes
@@ -160,9 +169,9 @@ def mdl(root):
     return mdl_list
 
 
-def update_list(title, season=None, lang='jp'):
+def update_list(title, season=None, lang='jp', column_param=None):
     # Wiki infomation
-    wiki_dict, root, wiki_link = wiki(title, season, lang)
+    wiki_dict, root, wiki_link = wiki(title, season, lang, column_param)
 
     # MDL information
     mdl_dict = mdl(root)

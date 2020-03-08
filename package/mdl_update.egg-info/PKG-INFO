@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: mdl-update
-Version: 0.4.1
+Version: 0.5.1
 Summary: Python package to update Japanese shows on MDL by scraping information from ja.wikipedia.org
 Home-page: https://github.com/arifer612/mydramalist-update
 Author: arifer

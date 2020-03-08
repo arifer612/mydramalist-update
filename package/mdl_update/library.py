@@ -32,17 +32,19 @@ def get_info(ask_info): # Retrieves additional information (if needed) to parse 
         while ask_info:
             print('Additional information:')
             additional_info = input('>>>')
-            if additional_info == 'lang':
+            if additional_info.lower() == 'lang':
                 print('Available language: jp/ko')
-                additional_info = input('>>>')
+                answer = input('>>>')
+            elif additional_info.lower() == 'column':
+                print('What is the header of the column?')
+                answer = input('>>>')
             ask_info = input('Confirm? (y/n) >>>') != 'y'
-        if additional_info:
-            if additional_info == 'jp' or 'ko':
-                pass
-            else:
-                additional_info = '      ' + additional_info
-        else:
+        if not additional_info:
             print('None')
+        elif additional_info.lower() == 'lang' or additional_info.lower() == 'column':
+            additional_info = additional_info.lower() + ' : ' + answer
+        else:
+            additional_info = '. : ' + additional_info
     else:
         additional_info = None
         print('None')
